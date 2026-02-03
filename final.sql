@@ -3,6 +3,7 @@ CREATE DATABASE FinalTest;
 USE FinalTest;
 SET SQL_SAFE_UPDATES = 0;
 
+
 -- Bảng Customers (Khách hàng)
 CREATE TABLE Customers (
     customer_id VARCHAR(10) NOT NULL,
@@ -14,6 +15,7 @@ CREATE TABLE Customers (
     CONSTRAINT uq_phone UNIQUE (phone_number)
 );
 
+
 -- Bảng Insurance_Packages (Gói bảo hiểm)
 CREATE TABLE Insurance_Packages (
     package_id VARCHAR(10) NOT NULL,
@@ -23,6 +25,7 @@ CREATE TABLE Insurance_Packages (
     CONSTRAINT pk_packages PRIMARY KEY (package_id),
     CONSTRAINT chk_max_limit CHECK (max_limit > 0)
 );
+
 
 -- Bảng Policies (Hợp đồng bảo hiểm)
 CREATE TABLE Policies (
@@ -37,6 +40,7 @@ CREATE TABLE Policies (
     CONSTRAINT fk_policies_packages FOREIGN KEY (package_id) REFERENCES Insurance_Packages(package_id)
 );
 
+
 -- Bảng Claims (Yêu cầu bồi thường)
 CREATE TABLE Claims (
     claim_id VARCHAR(10) NOT NULL,
@@ -49,6 +53,7 @@ CREATE TABLE Claims (
     CONSTRAINT chk_claim_amount CHECK (claim_amount > 0)
 );
 
+
 -- Bảng Claim_Processing_Log (Nhật ký xử lý)
 CREATE TABLE Claim_Processing_Log (
     log_id VARCHAR(50) NOT NULL,
@@ -60,6 +65,7 @@ CREATE TABLE Claim_Processing_Log (
     CONSTRAINT fk_logs_claims FOREIGN KEY (claim_id) REFERENCES Claims(claim_id)
 );
 
+
 -- Chèn dữ liệu Customers
 INSERT INTO Customers (customer_id, full_name, phone_number, email, join_date) VALUES
 	('C001', 'Nguyen Hoang Long', '0901112223', 'long.nh@gmail.com', '2024-01-15'),
@@ -67,6 +73,7 @@ INSERT INTO Customers (customer_id, full_name, phone_number, email, join_date) V
 	('C003', 'Le Hoang Nam', '0903334445', 'nam.lh@outlook.com', '2025-05-20'),
 	('C004', 'Pham Minh Duc', '0355556667', 'duc.pm@gmail.com', '2025-08-12'),
 	('C005', 'Hoang Thu Thao', '0779998881', 'thao.ht@gmail.com', '2026-01-01');
+
 
 -- Chèn dữ liệu Insurance_Packages
 INSERT INTO Insurance_Packages (package_id, package_name, max_limit, base_premium) VALUES
@@ -76,6 +83,7 @@ INSERT INTO Insurance_Packages (package_id, package_name, max_limit, base_premiu
 	('PKG04', 'Bảo hiểm Du lịch Quốc tế', 100000000, 1000000),
 	('PKG05', 'Bảo hiểm Tai nạn 24/7', 200000000, 2500000);
 
+
 -- Chèn dữ liệu Policies
 INSERT INTO Policies (policy_id, customer_id, package_id, start_date, end_date, status) VALUES
 	('POL101', 'C001', 'PKG01', '2024-01-15', '2025-01-15', 'Expired'),
@@ -84,6 +92,7 @@ INSERT INTO Policies (policy_id, customer_id, package_id, start_date, end_date, 
 	('POL104', 'C004', 'PKG04', '2025-08-12', '2025-09-12', 'Expired'),
 	('POL105', 'C005', 'PKG01', '2026-01-01', '2027-01-01', 'Active');
 
+
 -- Chèn dữ liệu Claims
 INSERT INTO Claims (claim_id, policy_id, claim_date, claim_amount, status) VALUES
 	('CLM901', 'POL102', '2024-06-15', 12000000, 'Approved'),
@@ -91,6 +100,7 @@ INSERT INTO Claims (claim_id, policy_id, claim_date, claim_amount, status) VALUE
 	('CLM903', 'POL101', '2024-11-05', 5500000, 'Approved'),
 	('CLM904', 'POL105', '2026-01-15', 2000000, 'Rejected'),
 	('CLM905', 'POL102', '2025-02-10', 120000000, 'Approved');
+
 
 -- Chèn dữ liệu Log (Nhớ dùng UUID cho Log_ID vì DDL trên mình để VARCHAR(50))
 INSERT INTO Claim_Processing_Log (log_id, claim_id, action_detail, recorded_at, processor) VALUES
@@ -103,6 +113,7 @@ INSERT INTO Claim_Processing_Log (log_id, claim_id, action_detail, recorded_at, 
 
 -- Tăng phí bảo hiểm cơ bản thêm 15% cho các gói bảo hiểm có hạn mức chi trả trên 500.000.000 VNĐ.
 UPDATE Insurance_Packages SET base_premium = base_premium * 1.15 WHERE max_limit > 500000000;
+
 -- Xóa các nhật ký xử lý bồi thường (Claim_Processing_Log) được ghi nhận trước ngày 20/6/2025.
 DELETE FROM Claim_Processing_Log WHERE recorded_at < '2025-06-20';
 
